@@ -12,3 +12,4 @@
 ## Прогресс по неделям
 
 - [x] Неделя 8 — каркас: config, PDA пользователя, share-токен ([docs/week08.md](docs/week08.md))
+- [x] Неделя 9 — депозит и share-токены ([docs/week09.md](docs/week09.md))

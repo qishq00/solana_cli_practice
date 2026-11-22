@@ -1,6 +1,12 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program, BN } from "@coral-xyz/anchor";
-import { createMint, getMint } from "@solana/spl-token";
+import {
+  createMint,
+  getMint,
+  getAccount,
+  getOrCreateAssociatedTokenAccount,
+  mintTo,
+} from "@solana/spl-token";
 import { expect } from "chai";
 import { LiquidityVault } from "../target/types/liquidity_vault";
 import { vaultPdas, userPda } from "./helpers";
@@ -13,6 +19,8 @@ describe("liquidity_vault", () => {
 
   let tokenMint: anchor.web3.PublicKey;
   let pdas: ReturnType<typeof vaultPdas>;
+  let userToken: anchor.web3.PublicKey;
+  let userShare: anchor.web3.PublicKey;
 
   // ---------- Неделя 8: каркас ----------
   it("initialize: создаёт config, share-mint и хранилище", async () => {
@@ -56,5 +64,45 @@ describe("liquidity_vault", () => {
     } catch (e: any) {
       expect(String(e)).to.match(/Unauthorized|ConstraintHasOne|Error/);
     }
+  });
+
+  // ---------- Неделя 9: депозит ----------
+  it("deposit: первый депозит 1:1", async () => {
+    userToken = (
+      await getOrCreateAssociatedTokenAccount(provider.connection, admin, tokenMint, admin.publicKey)
+    ).address;
+    userShare = (
+      await getOrCreateAssociatedTokenAccount(provider.connection, admin, pdas.shareMint, admin.publicKey)
+    ).address;
+    await mintTo(provider.connection, admin, tokenMint, userToken, admin, 1_000_000_000);
+
+    await program.methods
+      .deposit(new BN(100_000_000))
+      .accounts({
+        owner: admin.publicKey,
+        config: pdas.config,
+        userTokenAccount: userToken,
+        userShareAccount: userShare,
+      })
+      .rpc();
+
+    expect(Number((await getAccount(provider.connection, userShare)).amount)).to.eq(100_000_000);
+    expect(Number((await getAccount(provider.connection, pdas.tokenVault)).amount)).to.eq(100_000_000);
+  });
+
+  it("deposit: после «дохода» доля дорожает", async () => {
+    // имитируем доход vault: кидаем 10 токенов напрямую в хранилище
+    await mintTo(provider.connection, admin, tokenMint, pdas.tokenVault, admin, 10_000_000);
+    await program.methods
+      .deposit(new BN(110_000_000))
+      .accounts({
+        owner: admin.publicKey,
+        config: pdas.config,
+        userTokenAccount: userToken,
+        userShareAccount: userShare,
+      })
+      .rpc();
+    // 110 * 100 / 110 = 100 новых долей
+    expect(Number((await getAccount(provider.connection, userShare)).amount)).to.eq(200_000_000);
   });
 });

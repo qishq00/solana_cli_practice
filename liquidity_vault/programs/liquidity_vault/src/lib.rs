@@ -8,6 +8,7 @@ use anchor_lang::prelude::*;
 pub mod constants;
 pub mod errors;
 pub mod instructions;
+pub mod math;
 pub mod state;
 
 use instructions::*;
@@ -36,5 +37,10 @@ pub mod liquidity_vault {
         deposit_cap: Option<u64>,
     ) -> Result<()> {
         instructions::update_config::handler(ctx, paused, deposit_cap)
+    }
+
+    /// Неделя 9. Депозит: пользователь вносит токены и получает share-токены.
+    pub fn deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
+        instructions::deposit::handler(ctx, amount)
     }
 }

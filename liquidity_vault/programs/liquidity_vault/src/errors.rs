@@ -10,4 +10,8 @@ pub enum VaultError {
     ZeroAmount,
     #[msg("Арифметическое переполнение")]
     MathOverflow,
+    #[msg("Превышен лимит депозитов vault")]
+    DepositCapExceeded,
+    #[msg("Депозит слишком мал: 0 share-токенов")]
+    ZeroShares,
 }
