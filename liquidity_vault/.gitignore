@@ -5,3 +5,4 @@ test-ledger
 .yarn
 *.keypair.json
 .env
+scripts/state.json

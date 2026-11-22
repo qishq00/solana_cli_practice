@@ -24,6 +24,16 @@ pub struct VaultConfig {
     pub authority_bump: u8,
     pub share_mint_bump: u8,
     pub token_vault_bump: u8,
+
+    // ---------- Неделя 11: пул Raydium CLMM ----------
+    /// Второй токен пары (quote).
+    pub quote_mint: Pubkey,
+    /// Хранилище quote-токена. PDA: ["quote_vault", config]
+    pub quote_vault: Pubkey,
+    /// Пул Raydium CLMM, в который vault размещает ликвидность.
+    pub clmm_pool: Pubkey,
+    /// Программа Raydium CLMM (devnet или mainnet).
+    pub clmm_program: Pubkey,
 }
 
 /// Позиция пользователя в vault.

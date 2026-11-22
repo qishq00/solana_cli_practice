@@ -62,6 +62,10 @@ pub fn handler(ctx: Context<Initialize>, deposit_cap: u64) -> Result<()> {
     config.authority_bump = ctx.bumps.vault_authority;
     config.share_mint_bump = ctx.bumps.share_mint;
     config.token_vault_bump = ctx.bumps.token_vault;
+    config.quote_mint = Pubkey::default();
+    config.quote_vault = Pubkey::default();
+    config.clmm_pool = Pubkey::default();
+    config.clmm_program = Pubkey::default();
 
     msg!(
         "Vault создан: mint={}, share_mint={}",

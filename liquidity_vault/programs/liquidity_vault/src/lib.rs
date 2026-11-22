@@ -9,6 +9,7 @@ pub mod constants;
 pub mod errors;
 pub mod instructions;
 pub mod math;
+pub mod raydium;
 pub mod state;
 
 use instructions::*;
@@ -48,5 +49,15 @@ pub mod liquidity_vault {
     /// через CPI в Token program с подписью PDA.
     pub fn withdraw(ctx: Context<Withdraw>, shares: u64, min_amount_out: u64) -> Result<()> {
         instructions::withdraw::handler(ctx, shares, min_amount_out)
+    }
+
+    /// Неделя 11. Хранилище второго токена пары.
+    pub fn init_quote_vault(ctx: Context<InitQuoteVault>) -> Result<()> {
+        instructions::init_quote_vault::handler(ctx)
+    }
+
+    /// Неделя 11. Привязка vault к CLMM-пулу Raydium.
+    pub fn set_pool(ctx: Context<SetPool>) -> Result<()> {
+        instructions::set_pool::handler(ctx)
     }
 }

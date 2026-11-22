@@ -20,4 +20,8 @@ pub enum VaultError {
     SlippageExceeded,
     #[msg("В vault недостаточно свободных токенов")]
     InsufficientLiquidity,
+    #[msg("Аккаунт не является пулом Raydium CLMM или не подходит vault")]
+    InvalidPool,
+    #[msg("Пул vault ещё не настроен")]
+    PoolNotSet,
 }
