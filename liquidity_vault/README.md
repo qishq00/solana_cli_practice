@@ -15,3 +15,4 @@
 - [x] Неделя 9 — депозит и share-токены ([docs/week09.md](docs/week09.md))
 - [x] Неделя 10 — CPI и вывод из vault ([docs/week10.md](docs/week10.md))
 - [x] Неделя 11 — AMM, Raydium CLMM, свои токены и пул в devnet ([docs/week11.md](docs/week11.md))
+- [x] Неделя 12 — swap через Raydium CLMM со slippage ([docs/week12.md](docs/week12.md))

@@ -76,3 +76,65 @@ pub fn read_pool(pool: &AccountInfo) -> Result<PoolSnapshot> {
         tick_current: i32::from_le_bytes(data[269..273].try_into().unwrap()),
     })
 }
+
+// ---------- Неделя 12: CPI в Raydium CLMM ----------
+
+use anchor_lang::solana_program::instruction::{AccountMeta, Instruction};
+use anchor_lang::solana_program::program::invoke_signed;
+
+/// SPL Memo v2 — Raydium требует его в *_v2 инструкциях.
+pub const MEMO_PROGRAM: Pubkey = pubkey!("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+
+/// Anchor-дискриминаторы инструкций Raydium CLMM: sha256("global:<name>")[..8].
+pub mod ix {
+    pub const SWAP_V2: [u8; 8] = [43, 4, 237, 11, 26, 201, 30, 98];
+}
+
+/// Данные инструкции `swap_v2`.
+pub fn swap_v2_data(
+    amount: u64,
+    other_amount_threshold: u64,
+    sqrt_price_limit_x64: u128,
+    is_base_input: bool,
+) -> Vec<u8> {
+    let mut data = Vec::with_capacity(8 + 8 + 8 + 16 + 1);
+    data.extend_from_slice(&ix::SWAP_V2);
+    data.extend_from_slice(&amount.to_le_bytes());
+    data.extend_from_slice(&other_amount_threshold.to_le_bytes());
+    data.extend_from_slice(&sqrt_price_limit_x64.to_le_bytes());
+    data.push(is_base_input as u8);
+    data
+}
+
+pub fn meta(info: &AccountInfo, is_signer: bool) -> AccountMeta {
+    AccountMeta {
+        pubkey: info.key(),
+        is_signer,
+        is_writable: info.is_writable,
+    }
+}
+
+/// CPI в Raydium CLMM с подписью PDA vault. `accounts` — в порядке,
+/// который ожидает инструкция Raydium; `signer` — ключи, которые должны
+/// быть подписантами внутри CPI (наш PDA и, например, новый NFT-mint).
+pub fn invoke_clmm<'info>(
+    program: &AccountInfo<'info>,
+    accounts: &[AccountInfo<'info>],
+    signers: &[Pubkey],
+    data: Vec<u8>,
+    signer_seeds: &[&[&[u8]]],
+) -> Result<()> {
+    let metas = accounts
+        .iter()
+        .map(|a| meta(a, signers.contains(a.key)))
+        .collect();
+    let ix = Instruction {
+        program_id: program.key(),
+        accounts: metas,
+        data,
+    };
+    let mut infos = accounts.to_vec();
+    infos.push(program.clone());
+    invoke_signed(&ix, &infos, signer_seeds)?;
+    Ok(())
+}

@@ -24,4 +24,6 @@ pub enum VaultError {
     InvalidPool,
     #[msg("Пул vault ещё не настроен")]
     PoolNotSet,
+    #[msg("Нужно задать min_amount_out (защита от slippage)")]
+    SlippageNotSet,
 }

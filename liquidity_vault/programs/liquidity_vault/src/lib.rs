@@ -60,4 +60,16 @@ pub mod liquidity_vault {
     pub fn set_pool(ctx: Context<SetPool>) -> Result<()> {
         instructions::set_pool::handler(ctx)
     }
+
+    /// Неделя 12. Swap токенов vault через CLMM-пул Raydium
+    /// с ограничением на минимальную сумму получения (slippage).
+    pub fn swap<'info>(
+        ctx: Context<'_, '_, 'info, 'info, Swap<'info>>,
+        amount_in: u64,
+        min_amount_out: u64,
+        sqrt_price_limit_x64: u128,
+        base_to_quote: bool,
+    ) -> Result<()> {
+        instructions::swap::handler(ctx, amount_in, min_amount_out, sqrt_price_limit_x64, base_to_quote)
+    }
 }
