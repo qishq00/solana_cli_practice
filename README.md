@@ -29,3 +29,9 @@
 - модули (`mod`) — структура проекта как в Solana-программах
 - `serde` — сериализация данных аккаунтов
 - проверки перед изменениями — как валидация в Solana
+---
+
+# Liquidity Vault
+
+В папке [`liquidity_vault/`](liquidity_vault) — Anchor-программа сквозного проекта
+(DeFi-vault + Raydium CLMM). Описание по неделям — в `liquidity_vault/docs/`.
