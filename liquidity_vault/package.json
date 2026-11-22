@@ -6,7 +6,8 @@
     "w11:tokens": "ts-node scripts/01-create-tokens.ts",
     "w11:pool": "ts-node scripts/02-create-clmm-pool.ts",
     "w11:vault": "ts-node scripts/03-setup-vault.ts",
-    "w12:swap": "ts-node scripts/04-deposit-and-swap.ts"
+    "w12:swap": "ts-node scripts/04-deposit-and-swap.ts",
+    "w13": "ts-node scripts/05-position.ts"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1",

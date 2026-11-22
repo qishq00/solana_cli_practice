@@ -66,6 +66,9 @@ pub fn handler(ctx: Context<Initialize>, deposit_cap: u64) -> Result<()> {
     config.quote_vault = Pubkey::default();
     config.clmm_pool = Pubkey::default();
     config.clmm_program = Pubkey::default();
+    config.position_nft_mint = Pubkey::default();
+    config.position_tick_lower = 0;
+    config.position_tick_upper = 0;
 
     msg!(
         "Vault создан: mint={}, share_mint={}",

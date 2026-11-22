@@ -72,4 +72,53 @@ pub mod liquidity_vault {
     ) -> Result<()> {
         instructions::swap::handler(ctx, amount_in, min_amount_out, sqrt_price_limit_x64, base_to_quote)
     }
+
+    /// Неделя 13. Открыть позицию vault в CLMM-пуле в диапазоне [tick_lower, tick_upper).
+    #[allow(clippy::too_many_arguments)]
+    pub fn open_position<'info>(
+        ctx: Context<'_, '_, 'info, 'info, OpenPosition<'info>>,
+        tick_lower: i32,
+        tick_upper: i32,
+        tick_array_lower_start: i32,
+        tick_array_upper_start: i32,
+        liquidity: u128,
+        amount_0_max: u64,
+        amount_1_max: u64,
+    ) -> Result<()> {
+        instructions::position::open_handler(
+            ctx,
+            tick_lower,
+            tick_upper,
+            tick_array_lower_start,
+            tick_array_upper_start,
+            liquidity,
+            amount_0_max,
+            amount_1_max,
+        )
+    }
+
+    /// Неделя 13. Собрать накопленные комиссии позиции (decrease_liquidity с L = 0).
+    pub fn collect_fees<'info>(ctx: Context<'_, '_, 'info, 'info, ModifyPosition<'info>>) -> Result<()> {
+        instructions::position::decrease_handler(ctx, 0, 0, 0)
+    }
+
+    /// Неделя 13. Вывести ликвидность из позиции (вместе с комиссиями).
+    pub fn decrease_liquidity<'info>(
+        ctx: Context<'_, '_, 'info, 'info, ModifyPosition<'info>>,
+        liquidity: u128,
+        amount_0_min: u64,
+        amount_1_min: u64,
+    ) -> Result<()> {
+        instructions::position::decrease_handler(ctx, liquidity, amount_0_min, amount_1_min)
+    }
+
+    /// Неделя 13. Закрыть пустую позицию (сжечь NFT, вернуть ренту).
+    pub fn close_position(ctx: Context<ClosePosition>) -> Result<()> {
+        instructions::position::close_handler(ctx)
+    }
+
+    /// Неделя 13. Проверить, вышла ли цена из диапазона позиции.
+    pub fn check_rebalance(ctx: Context<CheckRebalance>) -> Result<()> {
+        instructions::position::check_rebalance_handler(ctx)
+    }
 }

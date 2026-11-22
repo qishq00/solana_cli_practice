@@ -34,6 +34,12 @@ pub struct VaultConfig {
     pub clmm_pool: Pubkey,
     /// Программа Raydium CLMM (devnet или mainnet).
     pub clmm_program: Pubkey,
+
+    // ---------- Неделя 13: позиция в CLMM ----------
+    /// NFT текущей позиции vault (Pubkey::default — позиции нет).
+    pub position_nft_mint: Pubkey,
+    pub position_tick_lower: i32,
+    pub position_tick_upper: i32,
 }
 
 /// Позиция пользователя в vault.

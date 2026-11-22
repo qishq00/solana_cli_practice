@@ -88,6 +88,55 @@ pub const MEMO_PROGRAM: Pubkey = pubkey!("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLG
 /// Anchor-дискриминаторы инструкций Raydium CLMM: sha256("global:<name>")[..8].
 pub mod ix {
     pub const SWAP_V2: [u8; 8] = [43, 4, 237, 11, 26, 201, 30, 98];
+    pub const OPEN_POSITION_V2: [u8; 8] = [77, 184, 74, 214, 112, 86, 241, 199];
+    pub const DECREASE_LIQUIDITY_V2: [u8; 8] = [58, 127, 188, 62, 79, 82, 196, 96];
+    pub const CLOSE_POSITION: [u8; 8] = [123, 134, 81, 0, 49, 68, 98, 98];
+}
+
+/// Metaplex Token Metadata — нужен сигнатурой open_position_v2.
+pub const METADATA_PROGRAM: Pubkey = pubkey!("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+
+/// Данные `open_position_v2`.
+#[allow(clippy::too_many_arguments)]
+pub fn open_position_v2_data(
+    tick_lower: i32,
+    tick_upper: i32,
+    tick_array_lower_start: i32,
+    tick_array_upper_start: i32,
+    liquidity: u128,
+    amount_0_max: u64,
+    amount_1_max: u64,
+    with_metadata: bool,
+    base_flag: Option<bool>,
+) -> Vec<u8> {
+    let mut d = Vec::with_capacity(8 + 16 + 16 + 16 + 1 + 2);
+    d.extend_from_slice(&ix::OPEN_POSITION_V2);
+    d.extend_from_slice(&tick_lower.to_le_bytes());
+    d.extend_from_slice(&tick_upper.to_le_bytes());
+    d.extend_from_slice(&tick_array_lower_start.to_le_bytes());
+    d.extend_from_slice(&tick_array_upper_start.to_le_bytes());
+    d.extend_from_slice(&liquidity.to_le_bytes());
+    d.extend_from_slice(&amount_0_max.to_le_bytes());
+    d.extend_from_slice(&amount_1_max.to_le_bytes());
+    d.push(with_metadata as u8);
+    match base_flag {
+        None => d.push(0),
+        Some(b) => {
+            d.push(1);
+            d.push(b as u8);
+        }
+    }
+    d
+}
+
+/// Данные `decrease_liquidity_v2`. `liquidity = 0` — только сбор комиссий.
+pub fn decrease_liquidity_v2_data(liquidity: u128, amount_0_min: u64, amount_1_min: u64) -> Vec<u8> {
+    let mut d = Vec::with_capacity(8 + 16 + 16);
+    d.extend_from_slice(&ix::DECREASE_LIQUIDITY_V2);
+    d.extend_from_slice(&liquidity.to_le_bytes());
+    d.extend_from_slice(&amount_0_min.to_le_bytes());
+    d.extend_from_slice(&amount_1_min.to_le_bytes());
+    d
 }
 
 /// Данные инструкции `swap_v2`.

@@ -26,4 +26,12 @@ pub enum VaultError {
     PoolNotSet,
     #[msg("Нужно задать min_amount_out (защита от slippage)")]
     SlippageNotSet,
+    #[msg("Некорректный диапазон тиков")]
+    InvalidRange,
+    #[msg("У vault уже есть открытая позиция")]
+    PositionAlreadyOpen,
+    #[msg("У vault нет открытой позиции")]
+    NoPosition,
+    #[msg("Цена внутри диапазона — перестановка не нужна")]
+    PositionInRange,
 }
