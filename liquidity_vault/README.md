@@ -13,3 +13,4 @@
 
 - [x] Неделя 8 — каркас: config, PDA пользователя, share-токен ([docs/week08.md](docs/week08.md))
 - [x] Неделя 9 — депозит и share-токены ([docs/week09.md](docs/week09.md))
+- [x] Неделя 10 — CPI и вывод из vault ([docs/week10.md](docs/week10.md))

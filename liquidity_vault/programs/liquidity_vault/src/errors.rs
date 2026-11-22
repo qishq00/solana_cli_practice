@@ -14,4 +14,10 @@ pub enum VaultError {
     DepositCapExceeded,
     #[msg("Депозит слишком мал: 0 share-токенов")]
     ZeroShares,
+    #[msg("Недостаточно share-токенов")]
+    InsufficientShares,
+    #[msg("Получено меньше минимальной суммы (slippage)")]
+    SlippageExceeded,
+    #[msg("В vault недостаточно свободных токенов")]
+    InsufficientLiquidity,
 }

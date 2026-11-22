@@ -43,4 +43,10 @@ pub mod liquidity_vault {
     pub fn deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
         instructions::deposit::handler(ctx, amount)
     }
+
+    /// Неделя 10. Вывод: share-токены сжигаются, vault возвращает токены
+    /// через CPI в Token program с подписью PDA.
+    pub fn withdraw(ctx: Context<Withdraw>, shares: u64, min_amount_out: u64) -> Result<()> {
+        instructions::withdraw::handler(ctx, shares, min_amount_out)
+    }
 }

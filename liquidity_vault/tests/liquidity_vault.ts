@@ -105,4 +105,39 @@ describe("liquidity_vault", () => {
     // 110 * 100 / 110 = 100 новых долей
     expect(Number((await getAccount(provider.connection, userShare)).amount)).to.eq(200_000_000);
   });
+
+  // ---------- Неделя 10: вывод ----------
+  it("withdraw: сжигает доли и возвращает токены с прибылью", async () => {
+    const before = Number((await getAccount(provider.connection, userToken)).amount);
+    // 100 долей из 200, в vault 220 токенов → 110 токенов
+    await program.methods
+      .withdraw(new BN(100_000_000), new BN(110_000_000))
+      .accounts({
+        owner: admin.publicKey,
+        config: pdas.config,
+        userTokenAccount: userToken,
+        userShareAccount: userShare,
+      })
+      .rpc();
+    const after = Number((await getAccount(provider.connection, userToken)).amount);
+    expect(after - before).to.eq(110_000_000);
+    expect(Number((await getMint(provider.connection, pdas.shareMint)).supply)).to.eq(100_000_000);
+  });
+
+  it("withdraw: min_amount_out защищает от slippage", async () => {
+    try {
+      await program.methods
+        .withdraw(new BN(10_000_000), new BN(999_000_000))
+        .accounts({
+          owner: admin.publicKey,
+          config: pdas.config,
+          userTokenAccount: userToken,
+          userShareAccount: userShare,
+        })
+        .rpc();
+      expect.fail("должно было упасть");
+    } catch (e: any) {
+      expect(String(e)).to.match(/SlippageExceeded/);
+    }
+  });
 });
